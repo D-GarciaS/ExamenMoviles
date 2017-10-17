@@ -1,0 +1,16 @@
+<resources>
+
+    <string name="app_name">TareaSettings</string>
+    <string name="title_section1">Technology</string>
+    <string name="title_section2">Home</string>
+    <string name="title_section3">Electronics</string>
+    <string name="fragment_technology_text">Tech stuff goes here!</string>
+    <string name="fragment_home_text">Home stuff goes here!</string>
+    <string name="fragment_electronics_text">Electronics stuff goes here!</string>
+    <string name="action_settings">Settings</string>
+    <string name="splash_screen_welcome">Welcome to My Products</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

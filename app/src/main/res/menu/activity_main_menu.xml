@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/activity_main_profile"
+        android:title="Profile" />
+
+    <item
+        android:id="@+id/action_products"
+        android:title="Product" />
+
+    <item
+        android:id="@+id/activity_main_logout"
+        android:title="LogOut" />
+
+    <item
+        android:id="@+id/activity_main_privacy"
+        android:title="Privacy Policy" />
+
+</menu>

@@ -32,6 +32,18 @@ public class ItemProductControl {
         return inserted;
     }
 
+    public long addItemProductFromValues(ContentValues values, DataBaseHandler dh){
+        long inserted = 0;
+        SQLiteDatabase db = dh.getWritableDatabase();
+        // Inserting Row
+        inserted = db.insert(DataBaseHandler.TABLE_PRODUCT, null, values);
+        // Closing database connection
+        try {db.close();} catch (Exception e) {}
+        db = null; values = null;
+        return inserted;
+    }
+
+
     public int updateProduct(ItemProduct product, DataBaseHandler dh){
         SQLiteDatabase db = dh.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -52,15 +64,32 @@ public class ItemProductControl {
 
     }
 
-    public void deleteProduct(int idProduct, DataBaseHandler dh){
+    public int updateProduct(ContentValues product, DataBaseHandler dh){
         SQLiteDatabase db = dh.getWritableDatabase();
-        db.delete(DataBaseHandler.TABLE_PRODUCT, DataBaseHandler.KEY_PRODUCT_ID
+
+        // Updating row
+        int count = db.update(DataBaseHandler.TABLE_PRODUCT, product,
+                DataBaseHandler.KEY_PRODUCT_ID + " = ?",
+                new String[] { product.getAsString(DataBaseHandler.KEY_PRODUCT_ID) });
+
+        try { db.close();} catch (Exception e) {}
+        db = null;
+        return count;
+
+    }
+
+    public int deleteProduct(int idProduct, DataBaseHandler dh){
+        SQLiteDatabase db = dh.getWritableDatabase();
+
+        int affected = db.delete(DataBaseHandler.TABLE_PRODUCT, DataBaseHandler.KEY_PRODUCT_ID
                 + " = ?", new String[] { String.valueOf(idProduct) });
         try {
             db.close();
         } catch (Exception e) {
         }
         db = null;
+
+        return affected;
     }
 
     public ItemProduct getProductById(int idProduct, DataBaseHandler dh){
@@ -113,6 +142,29 @@ public class ItemProductControl {
 
         return itemProduct;
     }
+
+    public Cursor getCursorProductById(int idProduct, DataBaseHandler dh){
+        ItemProduct itemProduct =  null;
+        String selectQuery = "SELECT S."+DataBaseHandler.KEY_PRODUCT_ID+","
+                + "S."+DataBaseHandler.KEY_PRODUCT_CATEGORY + ","
+                + "S."+DataBaseHandler.KEY_PRODUCT_DESCRIPTION + ","
+                + "S."+DataBaseHandler.KEY_PRODUCT_TITLE + ","
+                + "S."+DataBaseHandler.KEY_PRODUCT_IMAGE + ", "
+                + "C."+DataBaseHandler.KEY_CATEGORY_NAME + ", "
+                + "S."+DataBaseHandler.KEY_PRODUCT_STORE + " "
+                + " FROM "
+                + DataBaseHandler.TABLE_PRODUCT + " S, "
+                + DataBaseHandler.TABLE_CATEGORY + " C "
+                + "WHERE S."+DataBaseHandler.KEY_PRODUCT_ID
+                + " = " + idProduct + " AND "
+                + "C."+ DataBaseHandler.KEY_CATEGORY_ID + " = " + "S."+ DataBaseHandler.KEY_PRODUCT_CATEGORY;
+
+        SQLiteDatabase db = dh.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        return cursor;
+    }
+
 
     public ArrayList<ItemProduct> getProductsWhere(
             String strWhere, String strOrderBy, DataBaseHandler dh){
@@ -176,4 +228,36 @@ public class ItemProductControl {
 
         return items;
     }
+
+
+    public Cursor getProductsCursorWhere(
+            String strWhere, String strOrderBy, DataBaseHandler dh){
+
+        ArrayList<ItemProduct> items = new ArrayList<>();
+        ArrayList<Integer> stores = new ArrayList<>();
+
+        String selectQuery = "SELECT S."+DataBaseHandler.KEY_PRODUCT_ID+","
+                + "S."+DataBaseHandler.KEY_PRODUCT_CATEGORY + ","
+                + "S."+DataBaseHandler.KEY_PRODUCT_DESCRIPTION + ","
+                + "S."+DataBaseHandler.KEY_PRODUCT_TITLE + ","
+                + "S."+DataBaseHandler.KEY_PRODUCT_IMAGE + ", "
+                + "C."+DataBaseHandler.KEY_CATEGORY_NAME + ", "
+                + "S."+DataBaseHandler.KEY_PRODUCT_STORE + " "
+                + " FROM "
+                + DataBaseHandler.TABLE_PRODUCT + " S, "
+                + DataBaseHandler.TABLE_CATEGORY + " C "
+                + " WHERE "
+                + "C."+ DataBaseHandler.KEY_CATEGORY_ID + " = " + "S."+ DataBaseHandler.KEY_PRODUCT_CATEGORY
+                + ((strWhere != null)? ( " AND " + strWhere ) : "");
+
+        SQLiteDatabase db = dh.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(selectQuery, null);
+        }catch (Exception e){
+            Log.e("SQL", e.toString());
+        }
+        return cursor;
+    }
+
 }

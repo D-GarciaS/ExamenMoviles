@@ -236,7 +236,8 @@ public class ItemProductControl {
         ArrayList<ItemProduct> items = new ArrayList<>();
         ArrayList<Integer> stores = new ArrayList<>();
 
-        String selectQuery = "SELECT S."+DataBaseHandler.KEY_PRODUCT_ID+","
+        String selectQuery = "SELECT S._" +
+                "S."+DataBaseHandler.KEY_PRODUCT_ID+","
                 + "S."+DataBaseHandler.KEY_PRODUCT_CATEGORY + ","
                 + "S."+DataBaseHandler.KEY_PRODUCT_DESCRIPTION + ","
                 + "S."+DataBaseHandler.KEY_PRODUCT_TITLE + ","

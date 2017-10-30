@@ -2,8 +2,10 @@ package com.example.damiangarcia.tareasettings.Provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,34 +21,40 @@ public class ProductsProvider extends ContentProvider {
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
+    private static final String AUTHORITY =  "com.example.damiangarcia.tareasettings.Provider";
+    private static final String PROVIDER_NAME=  AUTHORITY + ".ProductsProvider";
+
     static {
-        sUriMatcher.addURI("com.example.damiangarcia.tareasettings.Provider", "productos", 1);
-        sUriMatcher.addURI("com.example.damiangarcia.tareasettings.Provider", "productos/#", 2);
+        sUriMatcher.addURI(AUTHORITY, "productos", 1);
+        sUriMatcher.addURI(AUTHORITY, "productos/#", 2);
+        //sUriMatcher.addURI(AUTHORITY, "ProductsProvider", 3);
 
         //sUriMatcher.addURI("com.example.damiangarcia.tareasettings.provider", "table3/#", 2);
     }
 
     @Override
     public boolean onCreate() {
-        return false;
-    }
+        Context context = getContext();
+        DataBaseHandler dh = DataBaseHandler.getInstance(context);
+        SQLiteDatabase db = dh.getWritableDatabase();
+        return true;    }
 
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String order) {
         ItemProductControl control = new ItemProductControl();
         DataBaseHandler h = DataBaseHandler.getInstance(getContext());
-        Cursor c;
+        Cursor c = null;
         switch (sUriMatcher.match(uri)){
             case  1:
                 c = control.getProductsCursorWhere(null,  order, h);
-                return c;
+                break;
             case  2:
                 int _id = Integer.parseInt(uri.getLastPathSegment());
                 c = control.getCursorProductById(_id,h);
                 return c;
         }
-        return null;
+        return c;
     }
 
     @Nullable

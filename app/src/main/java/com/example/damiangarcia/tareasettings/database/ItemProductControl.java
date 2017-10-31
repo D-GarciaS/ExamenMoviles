@@ -145,19 +145,27 @@ public class ItemProductControl {
 
     public Cursor getCursorProductById(int idProduct, DataBaseHandler dh){
         ItemProduct itemProduct =  null;
-        String selectQuery = "SELECT S."+DataBaseHandler.KEY_PRODUCT_ID+","
-                + "S."+DataBaseHandler.KEY_PRODUCT_CATEGORY + ","
-                + "S."+DataBaseHandler.KEY_PRODUCT_DESCRIPTION + ","
-                + "S."+DataBaseHandler.KEY_PRODUCT_TITLE + ","
-                + "S."+DataBaseHandler.KEY_PRODUCT_IMAGE + ", "
-                + "C."+DataBaseHandler.KEY_CATEGORY_NAME + ", "
-                + "S."+DataBaseHandler.KEY_PRODUCT_STORE + " "
+        String selectQuery = "SELECT S."+DataBaseHandler.KEY_PRODUCT_ID+"," // 0
+                + "S."+DataBaseHandler.KEY_PRODUCT_CATEGORY + ","           // 1
+                + "S."+DataBaseHandler.KEY_PRODUCT_DESCRIPTION + ","        // 2
+                + "S."+DataBaseHandler.KEY_PRODUCT_TITLE + ","              // 3
+                + "S."+DataBaseHandler.KEY_PRODUCT_IMAGE + ", "             // 4
+                + "C."+DataBaseHandler.KEY_CATEGORY_NAME + ", "             // 5
+                + "S."+DataBaseHandler.KEY_PRODUCT_STORE + ", "              // 6
+                + "T."+DataBaseHandler.KEY_PRODUCT_STORE + ", "              // 7
+                + "T."+DataBaseHandler.KEY_STORE_NAME + ", "                 // 8
+                + "Ci."+DataBaseHandler.KEY_CITY_NAME + ", "                 // 9
+                + "T."+DataBaseHandler.KEY_STORE_PHONE + " "                // 10
                 + " FROM "
                 + DataBaseHandler.TABLE_PRODUCT + " S, "
-                + DataBaseHandler.TABLE_CATEGORY + " C "
+                + DataBaseHandler.TABLE_CATEGORY + " C, "
+                + DataBaseHandler.TABLE_CITY + " Ci, "
+                + DataBaseHandler.TABLE_STORE + " T "
                 + "WHERE S."+DataBaseHandler.KEY_PRODUCT_ID
                 + " = " + idProduct + " AND "
-                + "C."+ DataBaseHandler.KEY_CATEGORY_ID + " = " + "S."+ DataBaseHandler.KEY_PRODUCT_CATEGORY;
+                + "C."+ DataBaseHandler.KEY_CATEGORY_ID + " = " + "S."+ DataBaseHandler.KEY_PRODUCT_CATEGORY
+                + " AND " + "S." + DataBaseHandler.KEY_PRODUCT_STORE + " = " + "T." + DataBaseHandler.KEY_STORE_ID
+                + " AND " + "T." + DataBaseHandler.KEY_STORE_CITY + " = " + "Ci." + DataBaseHandler.KEY_CITY_ID;
 
         SQLiteDatabase db = dh.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -236,8 +244,8 @@ public class ItemProductControl {
         ArrayList<ItemProduct> items = new ArrayList<>();
         ArrayList<Integer> stores = new ArrayList<>();
 
-        String selectQuery = "SELECT S._" +
-                "S."+DataBaseHandler.KEY_PRODUCT_ID+","
+        String selectQuery = "SELECT S."+DataBaseHandler.KEY_PRODUCT_ID+" as _id,"
+                + "S."+DataBaseHandler.KEY_PRODUCT_ID+","
                 + "S."+DataBaseHandler.KEY_PRODUCT_CATEGORY + ","
                 + "S."+DataBaseHandler.KEY_PRODUCT_DESCRIPTION + ","
                 + "S."+DataBaseHandler.KEY_PRODUCT_TITLE + ","
